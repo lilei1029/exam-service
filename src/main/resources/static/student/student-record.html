@@ -1,0 +1,325 @@
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="../layui-v2.4.5/layui/css/layui.css" media="all">
+
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item " style="width: 650px; position: relative; left:42%; ">
+        <h1><label  id="paperName"></label></h1>
+    </div>
+    <!--<div class="layui-form-item">-->
+       <!---->
+
+
+    <!--</div>-->
+    <div class="layui-form-item">
+        <h3><span  id="student"></span></h3>
+        <h3><span   style="position: relative; left:68%; top: -25px" id="subjectName"></span></h3>
+        <h3><span  style="position: relative; left:42%; top: -45px"  id="time"></span></h3>
+        <!--<h3><span  id="testTime"></span></h3>&nbsp;&nbsp;-->
+        <!--<h3><span  id="score"></span></h3>-->
+    </div>
+
+    <div class="layui-form-item" id="singleQuestion" style="width: 600px; position: relative; left:5%;">
+        <div class="layui-form-item">
+            <b><label id="one"></label></b>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="singleQuestions" style="width: 600px; position: relative; left:5%;">
+        <div class="layui-form-item ">
+            <b><label id="two"></label></b>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="singleQuestionJudge" style="width: 600px; position: relative; left:5%;">
+        <div class="layui-form-item ">
+            <b><label id="three"></label></b>
+        </div>
+    </div>
+    <div style="width: 650px; position: relative; left:35%;">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <a class="layui-btn" type="button" href="student-achievement.html" lay-submit="" lay-filter="demo1">返回</a>
+                <!--<button class="layui-btn" type="button" lay-filter="demo2" onclick="updateback()">退出</button>-->
+            </div>
+        </div>
+    </div>
+</form>
+<script src="../layui-v2.4.5/layui/layui.js"></script>
+<script src="../layui-v2.4.5/layui/public.js"></script>
+<script type="text/javascript">
+      var studentId,subjectName,id;
+
+
+      var r = window.location.search.substring(1);
+      var vars = r.split("?");
+      var v=r.split("&");
+      var SId;
+      for (var i = 0; i < vars.length; i++) {
+          var pair = vars[i].split("=");
+          SId = pair[1]
+         var sID= SId.split('&')
+          studentId=sID[0]
+
+      }
+      // alert(studentId)
+      for (var j=0;j<v.length;j++){
+          var p = v[i].split("=");
+          subjectName = p[1]
+      }
+
+      for (var m=0;m<v.length;m++){
+          var pv = v[m].split("=");
+          id = pv[1]
+      }
+console.log("id****",id)
+
+      var url0 = context+"/student/selectByStudentId?studentId="+studentId+"";
+      var xhr0 = new XMLHttpRequest();
+      xhr0.open("GET", url0, true);
+      // 添加http头，发送信息至服务器时内容编码类型
+      xhr0.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr0.onreadystatechange = function () {
+          if (xhr0.readyState == 4 && (xhr0.status == 200 || xhr0.status == 304)) {
+              //  从服务器获得数据,转为json形式
+              result = eval('(' + xhr0.responseText + ')').data;
+              StudentId = result.studentId;
+               Nickname = result.nickName;
+              var ClassName = result.className;
+              var student = document.getElementById("student");
+              var str = '学号:'+StudentId+'\xa0 \xa0\xa0\xa0\xa0 姓名:'+Nickname+'\xa0 \xa0\xa0\xa0\xa0班级:'+ClassName+'';
+              student.innerHTML = str;
+          }
+      };
+      xhr0.send();
+
+      layui.use('element', function () {
+          var element = layui.element;
+
+      });
+      layui.use(['laydate', 'laypage', 'layer', 'table', 'form', 'carousel', 'upload', 'element', 'slider'], function () {
+          var laydate = layui.laydate //日期
+              , laypage = layui.laypage //分页
+              , layer = layui.layer //弹层
+              , table = layui.table //表格
+              , carousel = layui.carousel //轮播
+              , upload = layui.upload //上传
+              , element = layui.element //元素操作
+              , slider = layui.slider //滑块
+              , form = layui.form
+
+      });
+      //
+      // var r = window.location.search.substring(1);
+      // var vars = r.split("?");
+      // for (var i = 0; i < vars.length; i++) {
+      //     var pair = vars[i].split("=");
+      //      sId = pair[1]
+      // }
+      // console.log(sId);
+      layui.use('form', function () {  //此段代码必不可少
+          var form = layui.form;
+      var url = context+"/record/selectRecord?subjectName=" + subjectName + "&studentId="+studentId+"&id="+id+"";
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      // 添加http头，发送信息至服务器时内容编码类型
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+              //  从服务器获得数据,转为json形式
+              var res = eval('(' + xhr.responseText + ')');
+              var num=res.number;
+               result=res.data;
+              paper=res.paper;
+              // var subject=res.subject;
+              var paperName = document.getElementById("paperName");
+              var sName = document.getElementById("subjectName");
+              var testTime = document.getElementById("testTime");
+              var score = document.getElementById("score");
+              var one=document.getElementById("one");
+              var two=document.getElementById("two");
+              var three=document.getElementById("three");
+              var th='三丶判断题(每题3分，共'+num.jnumber+'题，总分'+num.jnumber+'*3)';
+              three.innerHTML=th;
+              var t='二丶多选题(每题4分，共'+num.mnumber+'题，总分'+num.mnumber+'*4)';
+              two.innerHTML=t;
+              var o='一丶单选题(每题3分，共'+num.qnumber+'题，总分'+num.qnumber+'*3)';
+              one.innerHTML=o;
+              TestTime =result.testTime;
+              SubjectName = '考试科目:'+subjectName+   ' \xa0 \xa0\xa0\xa0\xa0' +'交卷时间:'+result.answerTime+'   \xa0\xa0\xa0\xa0\xa0考试成绩:'+result.score+'';
+              Score = '试卷总分:'+result.score;
+              PaperName = paper.paperName;
+              paperName.innerText = PaperName;
+              sName.innerText = SubjectName;
+              // testTime.innerText = TestTime;
+              // score.innerText = Score;
+              var content = eval('(' + result.content + ')');
+              var question = content.question;
+              for (var i = 0; i < question.length; i++) {
+                  num=question.length;
+                  questiontotle = question[i];
+                  var questionName = questiontotle.questionName;
+                  // var questioncontent = eval('(' + questiontotle.content + ')');
+                  var a = questiontotle.questionA;
+                  var b = questiontotle.questionB;
+                  var c = questiontotle.questionC;
+                  var d = questiontotle.questionD;
+                  // var chooseAnswer=questiontotle.chooseAnswer;
+                  console.log(chooseAnswer);
+                  var answer=questiontotle.answer;
+                  var singleQuestion = document.getElementById("singleQuestion");
+                  var j = i + 1;
+
+                  var str = '<label class=""  > ' + j + ' ->' + questionName + '</label> <br/>';
+                  str += '<input type="radio" name="question'+i+'" value="A" title="A:'+a+'"/><br/>';
+                  // str += '<label  id="A">A:'+a+'</label><br/>';
+
+
+                  str += '<input  type="radio" name="question'+i+'" value="B" title="B:'+b+'"/><br/>';
+                  // str += '<label class="" id="B">B:'+ b +' </label><br/>';
+
+                  str += '<input  type="radio" name="question'+i+'" value="C" title="C:'+c+'"/><br/>';
+                  // str += '<label class="" id="C">C:'+ c +' </label><br/>';
+
+                  str += '<input  type="radio" name="question'+i+'" value="D" title="D:'+d+'"/><br/><br/>';
+                  // str += '<label class="" id="D">D: ' + d + ' </label><br/>';
+                  str +='正确答案:'+answer+'<br/><br/>';
+                  singleQuestion.innerHTML += str;
+                  form.render();
+
+              }
+              for (var i = 0; i < question.length; i++) {
+                  var chooseAnswer= question[i].chooseAnswer;
+                  console.log(chooseAnswer);
+                  var check=document.getElementsByName("question"+i+"");
+                  console.log("check question****",check);
+                  for (var m=0;m<check.length;m++){
+                      if (check[m].value==chooseAnswer){
+                          check[m].checked=true;
+
+                          // break;
+                      }
+                      else {
+                          check[m].disabled=true;
+                          // break;
+
+                      }
+                  }
+              }
+
+              var questions = content.manyQuestion;
+              for (var a = 0; a < questions.length; a++) {
+                  questionstotle = questions[a];
+                  var questionName = questionstotle.questionName;
+                  // var questionscontent = eval('(' + questionstotle.content + ')');
+                  var aQuestions = questionstotle.questionA;
+                  var bQuestions = questionstotle.questionB;
+                  var cQuestions = questionstotle.questionC;
+                  var dQuestions = questionstotle.questionD;
+                  var answer=questionstotle.answer;
+                  console.log(answer);
+                  var singleQuestions = document.getElementById("singleQuestions");
+                  var k = a + 1;
+                  var strQuestions = '<label class=""> ' + k + ' ->' + questionName + '</label> <br/>';
+                  strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="A" title="A: ' + aQuestions + '"/><br/>';
+                  // strQuestions += '<label class="" id="A">A: ' + aQuestions + ' </label><br/>';
+
+
+                  strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="B" title="B:'+ bQuestions +'"/><br/>';
+                  // strQuestions += '<label class="" id="B">B: ' + bQuestions + ' </label><br/>';
+
+                  strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="C" title="C:'+ cQuestions+'"/><br/>';
+                  // strQuestions += '<label class="" id="C">C: ' + cQuestions + ' </label><br/>';
+
+                  strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="D" title="D:'+dQuestions+'"/><br/><br/>';
+                  // strQuestions += '<label class="" id="D">D: ' + dQuestions + ' </label><br/>';
+                  strQuestions +='正确答案:'+answer+'<br/><br/>';
+                  singleQuestions.innerHTML += strQuestions;
+                  form.render();
+
+
+              }
+              for (var a = 0; a < questions.length; a++) {
+                  var chooseAnswer= questions[a].chooseAnswer;
+                  console.log(chooseAnswer);
+                  var check=document.getElementsByName("questions"+a+"");
+
+                  for (var k=0;k<check.length;k++){
+                      // console.log(chooseAnswer.indexOf(check[k].value) != -1);
+                      if (chooseAnswer == null || chooseAnswer == '') {
+                          check[k].disabled = true;
+                      }
+                      else if (chooseAnswer.indexOf(check[k].value) != -1){
+                          console.log(chooseAnswer.indexOf(check[k].value) != -1);
+                          check[k].checked=true;
+                          check[k].disabled=true;
+                          // break;
+                      }
+                      else {
+                          check[k].disabled=true;
+                      }
+                  }
+              }
+              var questionJudge = content.judgeQuestion;
+              for (var b = 0; b < questionJudge.length; b++) {
+                  questionJudgetotle = questionJudge[b];
+                  var questionName = questionJudgetotle.questionName;
+                  // var questionJudgecontent = eval('(' + questionJudgetotle.content + ')');
+                  var aQuestionJudge = questionJudgetotle.questionA;
+                  var bQuestionJudge = questionJudgetotle.questionB;
+                  var chooseAnswer=questionJudgetotle.chooseAnswer;
+                  var answer=questionJudgetotle.answer;
+                  console.log(answer);
+                  var singleQuestionJudge = document.getElementById("singleQuestionJudge");
+                  var m = b + 1;
+                  var strQuestionJudge = '<label class=""> ' + m + ' ->' + questionName + '</label> <br/>';
+                  strQuestionJudge += '<input type="radio" name="questionJudge'+b+'" value="A" title="A:'+ aQuestionJudge+'"/><br/>';
+                  // strQuestionJudge += '<label class="" id="A">A: ' + aQuestionJudge + ' </label> <br/>';
+
+
+                  strQuestionJudge += '<input type="radio" name="questionJudge'+b+'" value="B" title="B: ' + bQuestionJudge + '"/><br/><br/>';
+                  // strQuestionJudge += '<label class="" id="B">B: ' + bQuestionJudge + ' </label><br/>';
+                  strQuestionJudge +='正确答案:'+answer+'<br/><br/>';
+                  singleQuestionJudge.innerHTML += strQuestionJudge;
+
+                  form.render();
+
+
+              }
+
+              for (var b = 0; b < questionJudge.length; b++) {
+                  var chooseAnswer1= questionJudge[b].chooseAnswer;
+                  var check1=document.getElementsByName("questionJudge"+b+"");
+                  for (var z=0;z<check1.length;z++){
+                      if (check1[z].value==chooseAnswer1){
+                          check1[z].checked=true;
+                          // break;
+                      }
+                      else {
+                          check1[z].disabled=true;
+                          // break;
+
+                      }
+                  }
+                  form.render();
+
+              }
+
+          }
+      };
+      xhr.send();
+      });
+
+
+</script>
+</body>
+</html>

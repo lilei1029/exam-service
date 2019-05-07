@@ -1,0 +1,38 @@
+
+
+spring:
+  datasource:
+#   数据源基本配置
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/exam?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&allowMultiQueries=true
+#    url: jdbc:mysql://101.132.168.110:3306/exam?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&allowMultiQueries=true
+    type: com.alibaba.druid.pool.DruidDataSource
+
+logging:
+  level:
+    com.exam.examservice.mapper: debug
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true   #开启下划线转驼峰
+
+mapper:
+    mappers:
+        - tk.mybatis.springboot.util.MyMapper
+    not-empty: false
+    identity: MYSQL
+file:
+  path: E:\filepath
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+server:
+  port: 2019
+#  ssl:
+#    key-store: 1886109_lldw.xyz.pfx
+#    key-store-password: 1886109_lldw

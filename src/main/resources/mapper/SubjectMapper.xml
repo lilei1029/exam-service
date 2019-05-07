@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.examservice.mapper.SubjectMapper">
+    <resultMap id="BaseResultMap" type="com.exam.examservice.beans.Subject">
+        <constructor>
+            <idArg column="id" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="subject_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, subject_name
+    </sql>
+
+    <select id="selectPage" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM subject
+        <if test="searchName!=null and searchName!=''">
+            WHERE subject_name LIKE  CONCAT(CONCAT('%',#{searchName},'%'))
+        </if>
+    </select>
+<!--批量删除-->
+    <delete id="deleteByIds">
+        delete from subject
+        where id
+        in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

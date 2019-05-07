@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.examservice.mapper.StudentMapper">
+    <!--<resultMap id="BaseResultMap" type="com.exam.examservice.beans.Student">-->
+    <!--<constructor>-->
+    <!--<idArg column="id" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="student_id" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="nick_name" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="class_id" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="age" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="gender" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--<arg column="role" javaType="java.lang.String" jdbcType="VARCHAR" />-->
+    <!--&lt;!&ndash;<arg column="oper_user" javaType="java.lang.String" jdbcType="VARCHAR" />&ndash;&gt;-->
+    <!--&lt;!&ndash;<arg column="oper_date" javaType="java.util.Date" jdbcType="TIMESTAMP" />&ndash;&gt;-->
+    <!--</constructor>-->
+    <!--</resultMap>-->
+    <sql id="Base_Column_List">
+        id, student_id, nick_name, class_id, age, gender, password, role
+    </sql>
+    <select id="selectPage" resultType="com.exam.examservice.beans.Student">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM student WHERE 1 = 1
+        <if test="searchName!=null and searchName!=''">
+            and nick_name LIKE CONCAT(CONCAT('%',#{searchName},'%'))
+        </if>
+        <if test="classId!=null and classId!=''">
+            and class_id=#{classId}
+        </if>
+    </select>
+
+    <update id="updateById" parameterType="com.exam.examservice.beans.Student">
+        update student
+        <set>
+            <if test="studentId!=null">
+                student_id=#{studentId},
+            </if>
+            <if test="nickName!=null">
+                nick_name=#{nickName},
+            </if>
+            <if test="classId!=null">
+                class_id=#{classId},
+            </if>
+            <if test="age!=null">
+                age=#{age},
+            </if>
+            <if test="gender!=null">
+                gender=#{gender},
+            </if>
+            <if test="password!=null">
+                password=#{password},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="java.lang.String">
+        delete from student
+        where id in
+        <foreach collection="array" item="id"  open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <!--<update id="updateById" parameterType="com.exam.examservice.beans.Student">-->
+        <!--UPDATE student-->
+        <!--<set>-->
+            <!--<foreach collection="_parameter" item="value" index="key" separator=",">-->
+                <!--<if test="key !='id'">-->
+                    <!--${key}=#{value}-->
+                <!--</if>-->
+            <!--</foreach>-->
+        <!--</set>-->
+        <!--<where>-->
+            <!--<choose>-->
+                <!--<when test="id!=null and id!=''">-->
+                    <!--id=#{id}-->
+                <!--</when>-->
+                <!--<when test="Base_Column_List!=null">-->
+                    <!--<foreach collection="Base_Column_List" item="value" index="key" separator="and">-->
+                        <!--${key}=#{value}-->
+                    <!--</foreach>-->
+                <!--</when>-->
+                <!--<otherwise>-->
+                    <!--1=2-->
+                <!--</otherwise>-->
+            <!--</choose>-->
+        <!--</where>-->
+
+    <!--</update>-->
+</mapper>

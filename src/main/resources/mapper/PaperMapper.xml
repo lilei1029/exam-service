@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.examservice.mapper.PaperMapper">
+
+    <sql id="Base_Column_List">
+        id,subject_id,paper_name,content ,score,test_time,create_time,create_user
+    </sql>
+    <select id="selectPage" resultType="com.exam.examservice.beans.Paper">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM paper WHERE 1=1
+        <if test="searchName!=null and searchName!=''">
+            AND paper_name LIKE CONCAT(CONCAT('%',#{searchName},'%'))
+        </if>
+        <if test="subjectId!=null and subjectId!=''">
+            AND subject_id=#{subjectId}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.exam.examservice.beans.Paper">
+        insert into paper (
+         id,subject_id,paper_name,content,score,test_time,create_time,create_user
+        )
+        values(
+        #{id},#{subjectId},#{paperName},#{content},#{score},#{testTime},#{createTime},#{createUser}
+        )
+    </insert>
+
+    <select id="selectByName" resultType="com.exam.examservice.beans.Paper">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM paper
+        <if test="paperName!=null and paperName!=''">
+            WHERE paper_name = #{paperName}
+        </if>
+    </select>
+
+    <update id="updateById" parameterType="com.exam.examservice.beans.Paper">
+        update paper
+        <set>
+            <if test="subjectId!=null">
+                subject_id=#{subjectId},
+            </if>
+            <if test="paperName!=null">
+                paper_name=#{paperName},
+            </if>
+            <if test="content!=null">
+                content=#{content},
+            </if>
+            <if test="score!=null">
+                score=#{score},
+            </if>
+            <if test="testTime!=null">
+                test_time=#{testTime},
+            </if>
+            <if test="createTime!=null">
+                create_time=#{createTime},
+            </if>
+            <if test="createUser!=null">
+                create_user=#{createUser},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="java.lang.String">
+        delete from paper
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

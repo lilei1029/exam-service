@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.examservice.mapper.JudgeQuestionMapper">
+
+    <sql id="Base_Column_List">
+        id,subject_id,question_name,question_a,question_b,answer
+    </sql>
+    <select id="selectPage" resultType="com.exam.examservice.beans.JudgeQuestion">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM judge_question WHERE 1=1
+        <if test="searchName!=null and searchName!=''">
+           AND question_name LIKE  CONCAT(CONCAT('%',#{searchName},'%'))
+        </if>
+        <if test="subjectId!=null and subjectId!=''">
+            AND subject_id=#{subjectId}
+        </if>
+    </select>
+
+    <insert id="insert" parameterType="com.exam.examservice.beans.JudgeQuestion">
+        insert into judge_question (
+         id,subject_id,question_name,question_a,question_b,answer
+        )
+        values(
+        #{id},#{subjectId},#{questionName},#{questionA},#{questionB},#{answer}
+        )
+    </insert>
+
+    <select id="selectByName" resultType="com.exam.examservice.beans.JudgeQuestion">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM judge_question
+        <if test="questionName!=null and questionName!=''">
+            WHERE question_name = #{questionName}
+        </if>
+    </select>
+
+    <update id="updateById" parameterType="com.exam.examservice.beans.JudgeQuestion">
+        update judge_question
+        <set>
+            <if test="subjectId!=null">
+                subject_id=#{subjectId},
+            </if>
+            <if test="questionName!=null">
+                question_name=#{questionName},
+            </if>
+            <if test="questionA!=null">
+                question_a=#{questionA},
+            </if>
+            <if test="questionB!=null">
+                question_b=#{questionB},
+            </if>
+            <if test="answer!=null">
+                answer=#{answer},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="java.lang.String">
+        delete from judge_question
+        where id in
+        <foreach collection="array" item="id"  open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

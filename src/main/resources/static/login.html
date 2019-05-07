@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>欢迎登录后台管理系统</title>
+    <link href="userLogin/css/login.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="layui-v2.4.5/layui/css/layui.css">
+
+</head>
+
+<body>
+<div class="main-login">
+    <div class="login-logo">
+        <h1><label>在线考试登录系统</label></h1>
+    </div>
+    <div class="login-content">
+        <input type="hidden" id="path" value="<%=path %>"/>
+        <form method="post" id="login-form" name="login-form">
+            <div class="login-info">
+                <span class="user">&nbsp;</span>
+                <input name="username" id="username" placeholder="请输入账号" type="text" value="" class="login-input"/>
+            </div>
+            <div class="login-info">
+                <span class="pwd">&nbsp;</span>
+                <input name="password"  type="password" placeholder="请输入密码"  class="login-input"/>
+            </div>
+            <div class="login-code-info">
+            <!--<div   onclick="createCode(4)">-->
+                <!--<span class="pwd">&nbsp;</span>-->
+                <input  id="inputCode" type="text" placeholder="请输入验证码"  class="login-code"  />
+                <!--<span  class="" id="checkCode1" onclick="createCode(4)">11111看不清换一张</span>-->
+            </div>
+            <div  class="login-span-info"  >
+                <img id="checkCode" src="/login/gainValidCode" onclick="createCode()" alt=""/>
+                <span  onclick="createCode()">换一张</span>
+            </div>
+
+            <div class="login-oper">
+                <input type="radio" name="role" value="1" title="学生"/>学生
+                <input type="radio" name="role" value="2" title="教师"/>教师
+                <input type="radio" name="role" value="3" title="管理员"/>管理员
+
+            </div>
+            <div class="login-oper">
+                <button name="" type="button" onclick="login()" class="login-btn">登 录</button>
+                <button name="" type="button" onclick="resetForm()" class="login-reset">重 置</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script src="layui-v2.4.5/layui/layui.js"></script>
+<script src="layui-v2.4.5/layui/public.js"></script>
+<script type="text/javascript">
+    //页面加载时，生成随机验证码
+    // window.onload=function(){
+    //     createCode(4);
+    // };
+    //生成验证码的方法
+    // function createCode(length) {
+    //     var code = "";
+    //     var codeLength = parseInt(length); //验证码的长度
+    //     var checkCode = document.getElementById("checkCode");
+    //     ////所有候选组成验证码的字符，当然也可以用中文的
+    //     var codeChars = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    //         'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+    //         'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+    //     //循环组成验证码的字符串
+    //     for (var i = 0; i < codeLength; i++)
+    //     {
+    //         //获取随机验证码下标
+    //         var charNum = Math.floor(Math.random() * 62);
+    //         //组合成指定字符验证码
+    //         code += codeChars[charNum];
+    //     }
+    //     if (checkCode)
+    //     {
+    //         //为验证码区域添加样式名
+    //         checkCode.className = "code";
+    //         //将生成验证码赋值到显示区
+    //         checkCode.innerHTML = code;
+    //     }
+    // }
+
+    //检查验证码是否正确
+    // function validateCode()
+    // {
+    //     //获取显示区生成的验证码
+    //     var checkCode = document.getElementById("checkCode").innerHTML;
+    //     //获取输入的验证码
+    //     var inputCode = document.getElementById("inputCode").value;
+    //     //console.log(checkCode);
+    //     //console.log(inputCode);
+    //     if (inputCode.length <= 0)
+    //     {
+    //         alert("请输入验证码！");
+    //     }
+    //     else if (inputCode.toUpperCase() != checkCode.toUpperCase())
+    //     {
+    //         alert("验证码输入有误！");
+    //         createCode(4);
+    //     }
+    //     else
+    //     {
+    //         alert("验证码正确！");
+    //     }
+    // }
+    function resetForm() {
+        document.getElementById("login-form").reset();
+        layui.form.render();
+
+    }
+
+    //加载弹出层组件
+    layui.use(['laydate', 'laypage', 'layer', 'form', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+
+        var laydate = layui.laydate //日期
+            , laypage = layui.laypage //分页
+            , layer = layui.layer //弹层
+            , table = layui.table //表格
+            , form = layui.form
+            , carousel = layui.carousel //轮播
+            , upload = layui.upload //上传
+            , element = layui.element //元素操作
+            , slider = layui.slider //滑块
+
+    });
+    //登录函数
+    function createCode() {
+        console.log(111);
+        var img = document.getElementById('checkCode');
+        //有缓存， 设置时间，获取不同时间的值
+        img.src = context+"/login/gainValidCode?time=" + Date.now();
+
+        // var url = context+"/login/gainValidCode";
+        // var xhr = new XMLHttpRequest();
+        // xhr.open('POST', url, true);
+        // xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        // xhr.onreadystatechange = function () {
+        //     // readyState == 4说明请求已完成
+        //     if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+        //
+        //     }
+        // };
+        // xhr.send()
+
+    }
+    function login() {
+
+        var role = document.getElementsByName("role");
+        var type = "";
+        for (var i = 0; i < role.length; i++) {
+            // alert(student[i].checked);
+            if (role[i].checked) {
+                type = role[i].value;
+                // break;
+            }
+        }
+        console.log(type);
+        var lable = document.getElementById("lable1");
+        var username = document.getElementsByName("username")[0].value;
+        var password = document.getElementsByName("password")[0].value;
+        var checkCode = document.getElementById("inputCode").value;
+        var roleId = document.getElementsByName("role")[0].value;
+        var reg = /^\s*|\s*$/g;    //除去前后空格
+        // username = username.replace(reg, "");
+        // password = password.replace(reg, "");
+        // alert(username);
+        // alert(username);
+        // alert(password);
+        if (username == "" && password == "") {
+            layer.msg("账号密码不能为空");
+            // lable.innerText = "账号不能为空";
+            return false;
+        }
+        if (username == "" && password != "") {
+            layer.msg("账号不能为空");
+            return false;
+        }
+
+        if (username != "" && password == "") {
+            layer.msg("密码不能为空");
+            return false;
+        }
+        if (checkCode==null||checkCode==""){
+            console.log(checkCode);
+            layer.msg("验证码不能为空");
+            return false;
+        }
+        console.log("*******"+type);
+        if (type == null||type=="") {
+            console.log(type);
+            layer.msg("请选择身份");
+
+            // lable.innerText = "";
+            return false;
+        }
+
+
+        // //获取显示区生成的验证码
+        // var checkCode = document.getElementById("checkCode").innerHTML;
+        // //获取输入的验证码
+        // var inputCode = document.getElementById("inputCode").value;
+        // //console.log(checkCode);
+        // //console.log(inputCode);
+        // if (inputCode.length <= 0)
+        // {
+        //     layer.msg("请输入验证码！");
+        //     return false;
+        // }
+        // else if (inputCode.toUpperCase() != checkCode.toUpperCase())
+        // {
+        //     layer.msg("验证码输入有误！");
+        //     createCode(4);
+        //     return false;
+        // }
+        // else
+        // {
+        //     console.log("验证码正确！");
+        // }
+
+
+        var url = context+"/login/userLogin";
+        var data = 'userName=' + username + '&password=' + password + '&role=' + type + '&code='+checkCode+'';
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            // readyState == 4说明请求已完成
+            if (xhr.readyState == 4 && xhr.status == 200 || xhr.status == 304) {
+                // 从服务器获得数据,转为json形式
+                var result = eval('(' + xhr.responseText + ')');
+                if (result.code == 200) {
+                    // layer.msg('登陆成功');
+                    if (type == 1) {
+                        var student = "student";
+                        document.cookie = student + "=" + username + ";expires=" + 30 * 1000+"; path=/";  //设置cookie
+                        layer.msg('登录成功', {
+                            icon: 1,//提示的样式
+                            time: 2000, //2秒关闭（如果不配置，默认是3秒）//设置后不需要自己写定时关闭了，单位是毫秒
+                            end:function(){
+                                location.href=context+'/student.html';
+                            }
+                        });
+                        var index = layer.load(1, {
+                            shade: [0.1, '#fff'] //0.1透明度的白色背景
+                        });
+                        // var index = layer.load(0, {shade: [0.1,'#fff']}); //0代表加载的风格，支持0-2
+//loading层
+                    }
+                    if (type == 2) {
+                        var teacher = "teacher";
+                        document.cookie = teacher + "=" + username + ";expires=" + 30 * 1000+"; path=/";  //设置cookie
+                        layer.msg('登录成功', {
+                            icon: 1,//提示的样式
+                            time: 2000, //2秒关闭（如果不配置，默认是3秒）//设置后不需要自己写定时关闭了，单位是毫秒
+                            end:function(){
+                                location.href=context+'/teacher.html';
+                            }
+                        });
+                        var index = layer.load(1, {
+                            shade: [0.1, '#fff'] //0.1透明度的白色背景
+                        });
+                        // var index = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+//loading层
+                    }
+                    if (type == 3) {
+                        var admin = "admin";
+                        document.cookie = admin + "=" + username + ";expires=" + 30 * 1000+"; path=/";  //设置cookie
+                        layer.msg('登录成功', {
+                            icon: 1,//提示的样式
+                            time: 2000, //2秒关闭（如果不配置，默认是3秒）//设置后不需要自己写定时关闭了，单位是毫秒
+                            end:function(){
+                                location.href=context+'/admin.html';
+                            }
+                        });
+                        var index = layer.load(1, {
+                            shade: [0.1, '#fff'] //0.1透明度的白色背景
+                        });
+                        // var index = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+//loading层
+
+                    }
+                }
+                if (result.code == 400) {
+                    layer.msg(result.msg);
+                }
+                if (result.code == 404) {
+                    alert(result.msg);
+                }
+            }
+        };
+        xhr.send(data);
+    }
+
+
+
+
+
+</script>
+</html>

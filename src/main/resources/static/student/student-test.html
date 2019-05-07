@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link rel="stylesheet" href="../layui-v2.4.5/layui/css/layui.css" media="all">
+
+<body>
+<form class="layui-form" >
+    <div class="layui-form-item " style="width: 650px; position: relative; left:42%; ">
+        <h1><label  id="paperName"></label></h1>
+    </div>
+    <!--<div class="layui-form-item">-->
+       <!---->
+
+
+    <!--</div>-->
+    <div class="layui-form-item">
+        <h3><span  id="student"></span></h3>
+        <h3><span   style="position: relative; left:68%; top: -25px" id="subjectName"></span></h3>
+        <h3><span  style="position: relative; left:42%; top: -45px;color: #c81623"  id="time"></span></h3>
+        <!--<h3><span  id="testTime"></span></h3>&nbsp;&nbsp;-->
+        <!--<h3><span  id="score"></span></h3>-->
+    </div>
+
+    <div class="layui-form-item" id="singleQuestion" style="width: 600px; position: relative; left:5%;">
+        <div class="layui-form-item ">
+            <b><label id="one"></label></b>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="singleQuestions" style="width: 600px; position: relative; left:5%;">
+        <div class="layui-form-item ">
+            <b><label id="two"></label></b>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="singleQuestionJudge" style="width: 600px; position: relative; left:5%;">
+        <div class="layui-form-item ">
+            <b><label id="three"></label></b>
+        </div>
+    </div>
+    <div style="width: 650px; position: relative; left:35%;">
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" type="button" lay-submit="" lay-filter="demo1" onclick="subPaper()">交卷</button>
+                <!--<button class="layui-btn" type="button" lay-filter="demo2" onclick="updateback()">退出</button>-->
+            </div>
+        </div>
+    </div>
+</form>
+<script src="../layui-v2.4.5/layui/layui.js"></script>
+<script src="../layui-v2.4.5/layui/public.js"></script>
+<script type="text/javascript">
+      var TestTime,t, StudentId,Nickname,sId,PaperId,timer,result,content;
+      var answerTime=TestTime*60-t;
+
+      //单纯分钟和秒倒计时
+      function resetTime(time){
+          timer = null;
+          t = time;
+          // var m=0;
+          // var s=0;
+          // m=Math.floor(t/60%60);
+          // m<10&&(m='0'+m);
+          // s=Math.floor(t%60);
+          function countDown(){
+              t--;
+
+              if(t<0){
+                  clearInterval(timer);
+              }
+              if (t<1)
+              {
+                  subPaper();
+              }
+              var m=Math.floor(t/60); //分钟
+              var s=t%60;      //秒数
+              var time = document.getElementById("time");
+              var str='考试剩余时间:'+m+'分钟'+s+'秒';
+              time.innerHTML=str;
+              console.log('');
+              console.log(m+"分钟"+s+"秒");
+          }
+          timer=setInterval(countDown,1000);
+      }
+      // resetTime(TestTime*60)
+
+
+    var getCookie=document.cookie.replace(/[ ]/g, "");
+    var arrCookie = getCookie.split(";");
+    var tipsname="";
+    for (var i=0;i<arrCookie.length;i++) {
+        var arr = arrCookie[i].split("=");
+        // var u=arr[1];
+        // if (username == arr[0]) {  //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为tips则执行判断语句中的赋值操作
+        if (arr[0]=="student") {
+            tipsname = arr[1];   //将cookie的值赋给变量tips
+            break;   //终止for循环遍历
+        }
+    }
+    console.log(tipsname);
+    var url0 = context+"/student/selectByStudentId?studentId="+tipsname+"";
+    var xhr0 = new XMLHttpRequest();
+    xhr0.open("GET", url0, true);
+    // 添加http头，发送信息至服务器时内容编码类型
+    xhr0.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr0.onreadystatechange = function () {
+        if (xhr0.readyState == 4 && (xhr0.status == 200 || xhr0.status == 304)) {
+            //  从服务器获得数据,转为json形式
+            result = eval('(' + xhr0.responseText + ')').data;
+            StudentId = result.studentId;
+             Nickname = result.nickName;
+            var ClassName = result.className;
+            var student = document.getElementById("student");
+            var str = '学号:'+StudentId+'\xa0 \xa0\xa0\xa0\xa0 姓名:'+Nickname+'\xa0 \xa0\xa0\xa0\xa0班级:'+ClassName+'';
+            student.innerHTML = str;
+        }
+    };
+    xhr0.send();
+
+
+    function updateback() {
+        var index2 = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        // parent.layer.close(index); //再执行关闭
+        layer.open({
+            content: '确定退出',
+            yes: function (index, layero) {
+                // if (confirm('确定要关闭么')) { //只有当点击confirm框的确定时，该层才会关闭
+                layer.close(index);
+                parent.layer.close(index2);
+                // }
+
+            }
+        });
+    }
+
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+
+    var r = window.location.search.substring(1);
+    var vars = r.split("?");
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+         sId = pair[1]
+    }
+    console.log(sId);
+    var url = context+"/student/selectPaperById?subjectId=" + sId + "";
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    // 添加http头，发送信息至服务器时内容编码类型
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+            //  从服务器获得数据,转为json形式
+            var res = eval('(' + xhr.responseText + ')');
+            var num=res.number;
+             result=res.data;
+            PaperId=result.id;
+            resetTime(result.testTime*60);
+            var subject=res.subject;
+            var paperName = document.getElementById("paperName");
+            var subjectName = document.getElementById("subjectName");
+            var testTime = document.getElementById("testTime");
+            var score = document.getElementById("score");
+            var one=document.getElementById("one");
+            var two=document.getElementById("two");
+            var three=document.getElementById("three");
+            var th='三丶判断题(每题3分，共'+num.jnumber+'题，总分'+num.jnumber+'*3)';
+            three.innerHTML=th;
+            var t='二丶多选题(每题4分，共'+num.mnumber+'题，总分'+num.mnumber+'*4)';
+            two.innerHTML=t;
+            var o='一丶单选题(每题3分，共'+num.qnumber+'题，总分'+num.qnumber+'*3)';
+            one.innerHTML=o;
+            TestTime =result.testTime;
+            SubjectName = '考试科目:'+subject.subjectName+   ' \xa0 \xa0\xa0\xa0\xa0' +'考试时长:'+result.testTime+'分钟   \xa0\xa0\xa0\xa0\xa0试卷总分:'+result.score+'';
+            Score = '试卷总分:'+result.score;
+            PaperName = result.paperName;
+            paperName.innerText = PaperName;
+            subjectName.innerHTML = SubjectName;
+            // testTime.innerText = TestTime;
+            // score.innerText = Score;
+             content = eval('(' + result.content + ')');
+            var question = content.question;
+            for (var i = 0; i < question.length; i++) {
+                num=question.length;
+                questiontotle = question[i];
+                var questionName = questiontotle.questionName;
+                // var questioncontent = eval('(' + questiontotle.content + ')');
+                var a = questiontotle.questionA;
+                var b = questiontotle.questionB;
+                var c = questiontotle.questionC;
+                var d = questiontotle.questionD;
+                var singleQuestion = document.getElementById("singleQuestion");
+                var j = i + 1;
+                var str = '<label readonly="true" class=""  > ' + j + ' ->' + questionName + '</label> <br/>';
+                str += '<input type="radio" name="question'+i+'" value="A" title="A:'+a+'"/><br/>';
+                // str += '<label  id="A">A:'+a+'</label><br/>';
+
+
+                str += '<input  type="radio" name="question'+i+'" value="B" title="B:'+b+'"/><br/>';
+                // str += '<label class="" id="B">B:'+ b +' </label><br/>';
+
+                str += '<input  type="radio" name="question'+i+'" value="C" title="C:'+c+'"/><br/>';
+                // str += '<label class="" id="C">C:'+ c +' </label><br/>';
+
+                str += '<input  type="radio" name="question'+i+'" value="D" title="D:'+d+'"/><br/><br/>';
+                // str += '<label class="" id="D">D: ' + d + ' </label><br/>';
+                singleQuestion.innerHTML += str;
+
+                layui.use('form',function(){
+                    var form = layui.form;
+
+                    //刷新界面 所有元素
+
+                    form.render();
+
+                });
+            }
+
+
+            var questions = content.manyQuestion;
+            for (var a = 0; a < questions.length; a++) {
+                questionstotle = questions[a];
+                var questionName = questionstotle.questionName;
+                // var questionscontent = eval('(' + questionstotle.content + ')');
+                var aQuestions = questionstotle.questionA;
+                var bQuestions = questionstotle.questionB;
+                var cQuestions = questionstotle.questionC;
+                var dQuestions = questionstotle.questionD;
+                var singleQuestions = document.getElementById("singleQuestions");
+                var k = a + 1;
+                var strQuestions = '<label  class=""> ' + k + ' ->' + questionName + '</label> <br/>';
+                strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="A" title="A: ' + aQuestions + '"/><br/>';
+                // strQuestions += '<label class="" id="A">A: ' + aQuestions + ' </label><br/>';
+
+
+                strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="B" title="B:'+ bQuestions +'"/><br/>';
+                // strQuestions += '<label class="" id="B">B: ' + bQuestions + ' </label><br/>';
+
+                strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="C" title="C:'+ cQuestions+'"/><br/>';
+                // strQuestions += '<label class="" id="C">C: ' + cQuestions + ' </label><br/>';
+
+                strQuestions += '<input type="checkbox" lay-skin="primary" name="questions'+a+'" value="D" title="D:'+dQuestions+'"/><br/><br/>';
+                // strQuestions += '<label class="" id="D">D: ' + dQuestions + ' </label><br/>';
+                singleQuestions.innerHTML += strQuestions;
+                layui.use('form',function(){
+                    var form = layui.form;
+
+                    //刷新界面 所有元素
+
+                    form.render();
+
+                });
+            }
+            var questionJudge = content.judgeQuestion;
+            for (var b = 0; b < questionJudge.length; b++) {
+                questionJudgetotle = questionJudge[b];
+                var questionName = questionJudgetotle.questionName;
+                // var questionJudgecontent = eval('(' + questionJudgetotle.content + ')');
+                var aQuestionJudge = questionJudgetotle.questionA;
+                var bQuestionJudge = questionJudgetotle.questionB;
+                // var cQuestionJudge = questionJudgecontent.C;
+                // var dQuestionJudge = questionJudgecontent.D;
+                var singleQuestionJudge = document.getElementById("singleQuestionJudge");
+                var m = b + 1;
+                var strQuestionJudge = '<label  class=""> ' + m + ' ->' + questionName + '</label> <br/>';
+                strQuestionJudge += '<input type="radio" name="questionJudge'+b+'" value="A" title="A:'+ aQuestionJudge+'"/><br/>';
+                // strQuestionJudge += '<label class="" id="A">A: ' + aQuestionJudge + ' </label> <br/>';
+
+
+                strQuestionJudge += '<input type="radio" name="questionJudge'+b+'" value="B" title="B: ' + bQuestionJudge + '"/><br/><br/>';
+                // strQuestionJudge += '<label class="" id="B">B: ' + bQuestionJudge + ' </label><br/>';
+
+                singleQuestionJudge.innerHTML += strQuestionJudge;
+                layui.use('form',function(){
+                    var form = layui.form;
+
+                    //刷新界面 所有元素
+                    form.render();
+
+                });
+            }
+
+        }
+    };
+    xhr.send();
+
+
+      layui.use(['laydate', 'laypage', 'layer', 'table', 'form', 'carousel', 'upload', 'element', 'slider'], function () {
+          var laydate = layui.laydate //日期
+              , laypage = layui.laypage //分页
+              , layer = layui.layer //弹层
+              , table = layui.table //表格
+              , carousel = layui.carousel //轮播
+              , upload = layui.upload //上传
+              , element = layui.element //元素操作
+              , slider = layui.slider //滑块
+              , form = layui.form
+                form.render('radio');
+
+      });
+
+    function subPaper() {
+        clearInterval(timer);
+        //获得前端传入的参数值id，并将去 id=  拆分转化为数字
+        var getCookie=document.cookie.replace(/[ ]/g, "");
+        var arrCookie = getCookie.split(";")
+        var tips="";
+        for (var i=0;i<arrCookie.length;i++)
+        {
+            var arr = arrCookie[i].split("=");
+            // var u=arr[1];
+            // if (username == arr[0]) {  //匹配变量名称，其中arr[0]是指的cookie名称，如果该条变量为tips则执行判断语句中的赋值操作
+            if (arr[0]=="student") {
+                tips = arr[1];   //将cookie的值赋给变量tips
+                break;   //终止for循环遍历
+            }
+            // }
+
+        }
+
+        // var content = eval('(' + result.content + ')');
+        console.log(content);
+        var question = content.question;
+        for (var j = 0; j < question.length; j++) {
+            var checkAnswer = document.getElementsByName("question" + j);
+            // alert(checkAnswer);
+            // console.log(checkAnswer);
+            for (var m = 0; m < checkAnswer.length; m++) {
+                // alert(1111);
+                if (checkAnswer[m].checked) {
+                    question[j].chooseAnswer = checkAnswer[m].value;
+                }
+            }
+        }
+        var manyQuestion=content.manyQuestion;
+        for (var k = 0; k < manyQuestion.length; k++) {
+            var checkAnswer = document.getElementsByName("questions" + k);
+            for (var n = 0; n < checkAnswer.length; n++) {
+                //console.log(111);
+                if (checkAnswer[n].checked) {
+                    // console.log(questions[k].answer);
+                    console.log(checkAnswer[n].value);
+                    if (manyQuestion[k].chooseAnswer == undefined ){
+                        manyQuestion[k].chooseAnswer='';
+                    }
+                    manyQuestion[k].chooseAnswer += checkAnswer[n].value;
+                    console.log(checkAnswer[n].value);
+                    // console.log(questions[k].answer);
+
+                }
+            }
+        }
+        var questionJudge=content.judgeQuestion;
+        for (var k = 0; k < questionJudge.length; k++) {
+            var checkAnswer = document.getElementsByName("questionJudge" + k);
+            for (var n = 0; n < checkAnswer.length; n++) {
+                if (checkAnswer[n].checked) {
+                    questionJudge[k].chooseAnswer = checkAnswer[n].value;
+                }
+            }
+        }
+        console.log("flag",content);
+
+        const param = JSON.stringify(content);
+        //获得前端传入的参数值id，并将去 id=  拆分转化为数字
+        console.log("dsdsds",param);
+
+        var con=encodeURI(encodeURI(param));
+        // console.log(con);
+
+        // var param = 'content=' + content+'';
+        var data ='content='+con+'&studentId='+tips+'&paperId='+PaperId+'&subjectId='+sId+'&studentName='+Nickname+'';
+        var url = context+"/student/addExamRecord";
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        // 添加http头，发送信息至服务器时内容编码类型
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 304)) {
+                //  从服务器获得数据,转为json形式
+                var result = eval('(' + xhr.responseText + ')');
+                if (result.code == 400) {
+                    alert(result.msg);
+                }
+                if (result.code == 200) {
+                    var data=result.data;
+                    console.log(111);
+                    layer.msg('提交成功', {
+                        icon: 1,//提示的样式
+                        time: 2000, //2秒关闭（如果不配置，默认是3秒）//设置后不需要自己写定时关闭了，单位是毫秒
+                        end:function(){
+                            location.href=context+'/student/student-result.html?studentId='+data.studentId+'&subjectId='+data.subjectId+'&id='+data.id+'';
+                        }
+                    });
+                    var index = layer.load(0, {shade: false}); //0代表加载的风格，支持0-2
+                    console.log(data.subjectName);
+
+                }
+            }
+        };
+        xhr.send(data);
+    }
+
+
+</script>
+</body>
+</html>

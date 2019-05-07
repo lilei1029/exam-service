@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.examservice.mapper.RecordMapper">
+
+    <sql id="Base_Column_List">
+        id,paper_id,student_id, subject_id,student_name,content ,answer_time,q_score,m_score,j_score,score
+    </sql>
+    <select id="selectBySubjectId" resultType="com.exam.examservice.beans.Record">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record WHERE 1=1
+        <if test="subjectId!=null and subjectId!=''">
+            AND subject_id= #{subjectId}
+        </if>
+        <if test="studentId!=null and studentId!=''">
+            AND student_id=#{studentId}
+        </if>
+    </select>
+    <select id="selectAllPage" resultType="com.exam.examservice.beans.Record">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record WHERE 1=1
+        <if test="searchId!=null and searchId!=''">
+            AND student_id LIKE  CONCAT(CONCAT('%',#{searchId},'%'))
+        </if>
+        <if test="searchName!=null and searchName!=''">
+        AND student_name LIKE  CONCAT(CONCAT('%',#{searchName},'%'))
+    </if>
+    </select>
+
+    <insert id="insert" parameterType="com.exam.examservice.beans.Record">
+        insert into record (
+          id,paper_id,student_id,subject_id,student_name,content,answer_time,q_score,m_score,j_score,score
+        )
+        values(
+        #{id},#{paperId},#{studentId},#{subjectId},#{studentName},#{content},#{answerTime},#{qScore},#{mScore},#{jScore},#{score}
+        )
+    </insert>
+
+    <select id="selectByStudentId" resultType="com.exam.examservice.beans.Record">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record
+        <if test="studentId!=null and studentId!=''">
+            WHERE student_id = #{studentId}
+        </if>
+    </select>
+
+    <select id="selectRecord" resultType="com.exam.examservice.beans.Record">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM record WHERE 1=1
+        <if test="studentId!=null and studentId!=''">
+           AND  student_id = #{studentId}
+        </if>
+        <if test="subjectId!=null and subjectId!=''">
+            AND  subject_id = #{subjectId}
+        </if>
+        <if test="subjectId!=null and subjectId!=''">
+            AND  id = #{id}
+        </if>
+    </select>
+    <update id="updateById" parameterType="com.exam.examservice.beans.Record">
+        update paper
+        <set>
+            <if test="subjectId!=null">
+                subject_id=#{subjectId},
+            </if>
+            <if test="paperName!=null">
+                paper_name=#{paperName},
+            </if>
+            <if test="content!=null">
+                content=#{content},
+            </if>
+            <if test="score!=null">
+                score=#{score},
+            </if>
+            <if test="testTime!=null">
+                test_time=#{testTime},
+            </if>
+            <if test="createTime!=null">
+                create_time=#{createTime},
+            </if>
+            <if test="createUser!=null">
+                create_user=#{createUser},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="java.lang.String">
+        delete from record
+        where student_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.examservice.mapper.ExamMapper">
+
+    <sql id="Base_Column_List">
+        id,subject_id,start_time,end_time,state
+    </sql>
+    <select id="selectPage" resultType="com.exam.examservice.beans.Exam">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exam WHERE 1=1
+    </select>
+
+    <select id="selectPageByState" resultType="com.exam.examservice.beans.Exam">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exam WHERE state='1'
+    </select>
+
+    <select id="findEndTimeLessSysdate" resultType="com.exam.examservice.beans.Exam">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exam WHERE  end_time &lt; SYSDATE() and state='1'
+    </select>
+
+    <insert id="insert" parameterType="com.exam.examservice.beans.Exam">
+        insert into exam (
+         id,subject_id,start_time,end_time,state
+        )
+        values(
+        #{id},#{subjectId},#{startTime},#{endTime},#{state}
+        )
+    </insert>
+
+    <select id="selectBySubjectId" resultType="com.exam.examservice.beans.Exam">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM exam
+        <if test="subjectId!=null and subjectId!=''">
+            WHERE subject_id = #{subjectId}
+        </if>
+    </select>
+
+    <update id="updateById" parameterType="com.exam.examservice.beans.Exam">
+        update exam
+        <set>
+            <if test="subjectId!=null">
+                subject_id=#{subjectId},
+            </if>
+            <if test="startTime!=null">
+                start_time=#{startTime},
+            </if>
+            <if test="endTime!=null">
+                end_time=#{endTime},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="deleteByIds" parameterType="java.lang.String">
+        delete from exam
+        where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
